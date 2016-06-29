@@ -21,7 +21,6 @@
     this._sendOutHandler = sendOut.bind(this);
     this._disconnHandler = onDisconnect.bind(this);
     this._errorHandler = onError.bind(this);
-    this._beforeUnloadHandler = this.close.bind(this);
 
     init(this);
   }
@@ -33,14 +32,12 @@
       if (err || !socketId) {
         self.emit(TransportEvent.ERROR, new Error(err));
       } else {
-        window.addEventListener('beforeunload', self._beforeUnloadHandler);
         bluetooth.onReceive.addListener(self._messageHandler);
         bluetooth.onReceiveError.addListener(self._errorHandler);
         bluetooth.connect(socketId, options.address, options.uuid, function () {
           if (chrome.runtime.lastError) {
             console.log(chrome.runtime.lastError.message);
             bluetooth.close(socketId, function () {
-              window.removeEventListener('beforeunload', self._beforeUnloadHandler);
               bluetooth.onReceive.removeListener(self._messageHandler);
               bluetooth.onReceiveError.removeListener(self._errorHandler);
               if (++retry <= BluetoothTransport.MAX_RETRIES) {
@@ -98,7 +95,6 @@
   }
 
   function onDisconnect() {
-    window.removeEventListener('beforeunload', this._beforeUnloadHandler);
     bluetooth.onReceive.removeListener(this._messageHandler);
     bluetooth.onReceiveError.removeListener(this._errorHandler);
     delete this._socketId;
