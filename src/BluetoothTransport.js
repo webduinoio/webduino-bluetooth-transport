@@ -107,7 +107,7 @@
 
   function sendOut() {
     var payload = new Uint8Array(this._buf).buffer;
-    bluetooth.send(this._socketId, payload);
+    this.isOpen && bluetooth.send(this._socketId, payload);
     clearBuf(this);
   }
 

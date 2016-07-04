@@ -55,7 +55,7 @@
 
   function sendOut() {
     var payload = new Uint8Array(this._buf).buffer;
-    bluetoothSerial.write(payload, this._nop, this._errorHandler);
+    this.isOpen && bluetoothSerial.write(payload, this._nop, this._errorHandler);
     clearBuf(this);
   }
 

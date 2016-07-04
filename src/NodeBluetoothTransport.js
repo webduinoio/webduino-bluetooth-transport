@@ -83,7 +83,7 @@ function onError(error) {
 
 function sendOut() {
   var payload = new Buffer(this._buf);
-  this._btSerial && this._btSerial.write(payload, this._errorHandler);
+  this.isOpen && this._btSerial.write(payload, this._errorHandler);
   clearBuf(this);
 }
 
