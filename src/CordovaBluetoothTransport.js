@@ -87,7 +87,7 @@
   };
 
   proto.close = function () {
-    if (this.isOpen) {
+    if (this._isConnected) {
       bluetoothSerial.disconnect(this._disconnHandler, this._disconnHandler);
     }
   };

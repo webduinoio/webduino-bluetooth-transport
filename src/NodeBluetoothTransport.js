@@ -68,6 +68,7 @@ function onMessage(data) {
 }
 
 function onDisconnect() {
+  this._btSerial.removeAllListeners();
   delete this._btSerial;
   if (!this._closed) {
     this.emit(TransportEvent.CLOSE);
@@ -115,8 +116,13 @@ proto.send = function (payload) {
 };
 
 proto.close = function () {
-  if (this.isOpen) {
-    this._btSerial.close();
+  if (this._btSerial) {
+    if (this._btSerial.isOpen()) {
+      this._btSerial.close();
+    } else {
+      this._btSerial.removeAllListeners();
+      delete this._btSerial;
+    }
   }
 };
 

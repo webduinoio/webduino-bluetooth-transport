@@ -1,6 +1,6 @@
 {
   "name": "webduino-bluetooth-transport",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Bluetooth Transport Plugin for webduino-js",
   "main": "src/NodeBluetoothTransport.js",
   "repository": {

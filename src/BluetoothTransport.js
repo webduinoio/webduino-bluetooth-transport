@@ -139,7 +139,7 @@
   };
 
   proto.close = function () {
-    if (this.isOpen) {
+    if (this._socketId) {
       bluetooth.close(this._socketId, this._disconnHandler);
     }
   };
