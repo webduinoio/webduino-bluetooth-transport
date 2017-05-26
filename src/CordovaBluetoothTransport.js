@@ -1,4 +1,4 @@
-+(function (scope) {
++(function (scope, document) {
   'use strict';
 
   var push = Array.prototype.push;
@@ -27,8 +27,11 @@
 
   function init(self) {
     var options = self._options;
-    bluetoothSerial.subscribeRawData(self._messageHandler, self._errorHandler);
-    bluetoothSerial.connect(options.address, self._connHandler, self._errorHandler);
+
+    document.addEventListener('deviceready', function () {
+      bluetoothSerial.subscribeRawData(self._messageHandler, self._errorHandler);
+      bluetoothSerial.connect(options.address, self._connHandler, self._errorHandler);
+    });
   }
 
   function onConnect() {
@@ -93,4 +96,4 @@
   };
 
   scope.transport.bluetooth = CordovaBluetoothTransport;
-}(webduino));
+}(webduino, window.document));
