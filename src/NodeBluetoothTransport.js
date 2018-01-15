@@ -126,4 +126,10 @@ proto.close = function () {
   }
 };
 
+proto.flush = function () {
+  if (this._buf && this._buf.length) {
+    this._sendOutHandler();
+  }
+};
+
 module.exports = NodeBluetoothTransport;

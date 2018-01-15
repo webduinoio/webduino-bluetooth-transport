@@ -95,5 +95,11 @@
     }
   };
 
+  proto.flush = function () {
+    if (this._buf && this._buf.length) {
+      this._sendOutHandler();
+    }
+  };
+
   scope.transport.bluetooth = CordovaBluetoothTransport;
 }(webduino, window.document));

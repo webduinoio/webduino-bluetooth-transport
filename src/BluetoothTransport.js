@@ -144,6 +144,12 @@
     }
   };
 
+  proto.flush = function () {
+    if (this._buf && this._buf.length) {
+      this._sendOutHandler();
+    }
+  };
+
   BluetoothTransport.MAX_RETRIES = 10;
 
   scope.transport.bluetooth = BluetoothTransport;
