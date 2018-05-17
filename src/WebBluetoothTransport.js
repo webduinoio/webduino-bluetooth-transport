@@ -1,5 +1,4 @@
 +(function (scope, navigator) {
-
   'use strict';
 
   var push = Array.prototype.push,
@@ -22,6 +21,7 @@
     this._tx = null;
     this._rx = null;
     this._sendTimer = null;
+    this._sending = false;
     this._buf = [];
 
     this._messageHandler = onMessage.bind(this);
@@ -71,18 +71,23 @@
   }
 
   function sendOut() {
-    var payload = new Uint8Array(this._buf).buffer;
-    if (this.isOpen) {
-      this._tx.writeValue(payload).then(function () {
-        clearBuf(this);
+    if (this.isOpen && this._buf.length > 0) {
+      this._sending = true;
+
+      var sendBuf = this._buf.slice(0, 20);
+      sendBuf = new Uint8Array(sendBuf);
+      this._buf = this._buf.slice(20);
+
+      this._tx.writeValue(sendBuf.buffer).then(function () {
+        if (this._buf.length > 0) {
+          this._sendTimer = setImmediate(this._sendOutHandler);
+        } else {
+          clearImmediate(this._sendTimer);
+          this._sendTimer = null;
+          this._sending = false;
+        }
       }.bind(this));
     }
-  }
-
-  function clearBuf(self) {
-    self._buf = [];
-    clearImmediate(self._sendTimer);
-    self._sendTimer = null;
   }
 
   WebBluetoothTransport.prototype = proto = Object.create(Transport.prototype, {
@@ -101,8 +106,8 @@
 
   proto.send = function (payload) {
     push.apply(this._buf, payload);
-    if (!this._sendTimer) {
-      this._sendTimer = setImmediate(this._sendOutHandler);
+    if (!this._sending) {
+      this._sendOutHandler();
     }
   };
 
@@ -113,9 +118,6 @@
   };
 
   proto.flush = function () {
-    if (this._buf && this._buf.length) {
-      this._sendOutHandler();
-    }
   };
 
   WebBluetoothTransport.SERVICE_NAME = '00001101-B5A3-F393-E0A9-E50E24DCCA9E';
